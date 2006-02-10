@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_protector/LibertyProtector.php,v 1.2 2006/02/10 10:34:26 lsces Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_protector/LibertyProtector.php,v 1.3 2006/02/10 13:50:23 lsces Exp $
  *
  * Copyright (c) 2004 bitweaver.org
  * Copyright (c) 2003 tikwiki.org
@@ -8,7 +8,7 @@
  * All Rights Reserved. See copyright.txt for details and a complete list of authors.
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
  *
- * $Id: LibertyProtector.php,v 1.2 2006/02/10 10:34:26 lsces Exp $
+ * $Id: LibertyProtector.php,v 1.3 2006/02/10 13:50:23 lsces Exp $
  * @package protector
  */
 
@@ -28,7 +28,7 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
  *
  * @author spider <spider@steelsun.com>
  *
- * @version $Revision: 1.2 $ $Date: 2006/02/10 10:34:26 $ $Author: lsces $
+ * @version $Revision: 1.3 $ $Date: 2006/02/10 13:50:23 $ $Author: lsces $
  */
 class LibertyProtector extends LibertyBase {
     /**
@@ -53,21 +53,25 @@ class LibertyProtector extends LibertyBase {
 
 function protector_content_list() {
 	global $gBitUser;
+	$groups = array_keys($gBitUser->mGroups);
 	$ret = array(
 		'join_sql' => " LEFT JOIN `".BIT_DB_PREFIX."liberty_content_group_map` lcgm ON ( lc.`content_id`=lcgm.`content_id` ) LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON ( ugm.`group_id`=lcgm.`group_id` ) ",
-		'where_sql' => " AND (lcgm.`content_id` IS NULL OR lcgm.`group_id` = ".ANONYMOUS_GROUP_ID." OR ugm.`user_id`=?) ",
+		'where_sql' => " AND (lcgm.`content_id` IS NULL OR lcgm.`group_id` IN(". implode(',', array_fill(0, count($groups), '?')) ." ) OR ugm.`user_id`=?) ",
 		'bind_vars' => array( $gBitUser->mUserId ),
 	);
+	$ret['bind_vars'] = array_merge( $groups, $ret['bind_vars'] );
 	return $ret;
 }
 
 function protector_content_load() {
 	global $gBitUser;
+	$groups = array_keys($gBitUser->mGroups);
 	$ret = array(
 		'join_sql' => " LEFT JOIN `".BIT_DB_PREFIX."liberty_content_group_map` lcgm ON ( lc.`content_id`=lcgm.`content_id` ) LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON ( ugm.`group_id`=lcgm.`group_id` ) ",
-		'where_sql' => " AND (lcgm.`content_id` IS NULL OR lcgm.`group_id` = ".ANONYMOUS_GROUP_ID." OR ugm.`user_id`=?) ",
+		'where_sql' => " AND (lcgm.`content_id` IS NULL OR lcgm.`group_id` IN(". implode(',', array_fill(0, count($groups), '?')) ." ) OR ugm.`user_id`=?) ",
 		'bind_vars' => array( $gBitUser->mUserId ),
 	);
+	$ret['bind_vars'] = array_merge( $groups, $ret['bind_vars'] );
 	return $ret;
 }
 
