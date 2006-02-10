@@ -2,9 +2,9 @@
 global $gBitSystem, $gBitSmarty;
 $gBitSystem->registerPackage( 'protector', dirname( __FILE__).'/', TRUE, LIBERTY_SERVICE_ACCESS_CONTROL );
 
-require_once( PROTECTOR_PKG_PATH.'LibertyProtector.php' );
-
 if( $gBitSystem->isPackageActive( 'protector' ) ) {
+	require_once( PROTECTOR_PKG_PATH.'LibertyProtector.php' );
+
 	$gLibertySystem->registerService( LIBERTY_SERVICE_ACCESS_CONTROL, PROTECTOR_PKG_NAME, array(
 		'content_display_function' => 'protector_content_display',
 		'content_preview_function' => 'protector_content_edit',
