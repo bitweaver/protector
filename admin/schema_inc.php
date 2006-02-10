@@ -50,5 +50,6 @@ $gBitInstaller->registerPreferences( PROTECTOR_PKG_NAME, array(
 	array(PROTECTOR_PKG_NAME, 'protector_list_content_id','y'),
 	array(PROTECTOR_PKG_NAME, 'protector_list_title','y'),
 	array(PROTECTOR_PKG_NAME, 'protector_list_description','y'),
+	array(PROTECTOR_PKG_NAME, 'protector_single_group','y'),
 ) );
 ?>
