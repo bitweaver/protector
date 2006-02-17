@@ -1,6 +1,12 @@
 <?php
 global $gBitSystem, $gBitSmarty;
-$gBitSystem->registerPackage( 'protector', dirname( __FILE__).'/', TRUE, LIBERTY_SERVICE_ACCESS_CONTROL );
+
+$registerHash = array(
+	'package_name' => 'protector',
+	'package_path' => dirname( __FILE__ ).'/',
+	'service' => LIBERTY_SERVICE_ACCESS_CONTROL,
+);
+$gBitSystem->registerPackage( $registerHash );
 
 if( $gBitSystem->isPackageActive( 'protector' ) ) {
 	require_once( PROTECTOR_PKG_PATH.'LibertyProtector.php' );
