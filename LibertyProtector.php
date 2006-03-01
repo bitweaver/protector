@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_protector/LibertyProtector.php,v 1.3 2006/02/10 13:50:23 lsces Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_protector/LibertyProtector.php,v 1.4 2006/03/01 21:11:44 lsces Exp $
  *
  * Copyright (c) 2004 bitweaver.org
  * Copyright (c) 2003 tikwiki.org
@@ -8,7 +8,7 @@
  * All Rights Reserved. See copyright.txt for details and a complete list of authors.
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
  *
- * $Id: LibertyProtector.php,v 1.3 2006/02/10 13:50:23 lsces Exp $
+ * $Id: LibertyProtector.php,v 1.4 2006/03/01 21:11:44 lsces Exp $
  * @package protector
  */
 
@@ -28,7 +28,7 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
  *
  * @author spider <spider@steelsun.com>
  *
- * @version $Revision: 1.3 $ $Date: 2006/02/10 13:50:23 $ $Author: lsces $
+ * @version $Revision: 1.4 $ $Date: 2006/03/01 21:11:44 $ $Author: lsces $
  */
 class LibertyProtector extends LibertyBase {
     /**
@@ -101,9 +101,11 @@ function protector_content_verify_access( &$pContent, &$pHash ) {
 function protector_content_edit( &$pContent ) {
 	global $gProtector, $gBitUser, $gBitSmarty;
 	$groups = $gBitUser->getGroups();
-	$gBitSmarty->assign( 'protectorGroupsId', array_keys( $groups ) );
-	$gBitSmarty->assign( 'protectorGroupsDesc', array_values( $groups ) );
-	$gBitSmarty->assign( 'protectorGroups', $gBitUser->getGroups() );
+	foreach( array_keys( $groups ) as $groupId ) {
+		$protectorGroupsId[$groups[$groupId]['group_name']] = $groupId;
+	}
+	$gBitSmarty->assign_by_ref( 'protectorGroupsId', $protectorGroupsId );
+	$gBitSmarty->assign_by_ref( 'protectorGroups', $groups );
 }
 
 global $gProtector;
