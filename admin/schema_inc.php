@@ -20,9 +20,6 @@ foreach( array_keys( $tables ) AS $tableName ) {
 $gBitInstaller->registerPackageInfo( PROTECTOR_PKG_NAME, array(
 	'description' => "Protector restricts access to content based on groups.",
 	'license' => '<a href="http://www.gnu.org/licenses/licenses.html#LGPL">LGPL</a>',
-	'version' => '1.0',
-	'state' => 'beta',
-	'dependencies' => 'liberty',
 ) );
 
 // ### Indexes
