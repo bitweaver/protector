@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_protector/LibertyProtector.php,v 1.8 2006/11/09 18:55:53 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_protector/LibertyProtector.php,v 1.9 2006/11/09 19:47:49 squareing Exp $
  *
  * Copyright (c) 2004 bitweaver.org
  * Copyright (c) 2003 tikwiki.org
@@ -8,7 +8,7 @@
  * All Rights Reserved. See copyright.txt for details and a complete list of authors.
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
  *
- * $Id: LibertyProtector.php,v 1.8 2006/11/09 18:55:53 squareing Exp $
+ * $Id: LibertyProtector.php,v 1.9 2006/11/09 19:47:49 squareing Exp $
  * @package protector
  */
 
@@ -28,7 +28,7 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
  *
  * @author spider <spider@steelsun.com>
  *
- * @version $Revision: 1.8 $ $Date: 2006/11/09 18:55:53 $ $Author: squareing $
+ * @version $Revision: 1.9 $ $Date: 2006/11/09 19:47:49 $ $Author: squareing $
  */
 class LibertyProtector extends LibertyBase {
     /**
@@ -45,14 +45,14 @@ class LibertyProtector extends LibertyBase {
 	**/
 	function storeProtection( &$pParamHash ) {
 		global $gBitSystem;
-		if( isset( $pParamHash['protector_group'] ) ) {
+		if( @BitBase::verifyId( $pParamHash['protector']['group_id'] ) ) {
 			$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_content_group_map` WHERE `content_id`=?", array( $pParamHash['content_id'] ) );
 			if( $gBitSystem->isFeatureActive( 'protector_single_group' ) ) {
-				if ( $pParamHash['protector_group'] != -1 )
-					$this->mDb->query( "INSERT INTO `".BIT_DB_PREFIX."liberty_content_group_map` ( `group_id`, `content_id` ) VALUES ( ?, ? )", array( $pParamHash['protector_group'], $pParamHash['content_id'] ) );
+				if( $pParamHash['protector']['group_id'] != -1 )
+					$this->mDb->query( "INSERT INTO `".BIT_DB_PREFIX."liberty_content_group_map` ( `group_id`, `content_id` ) VALUES ( ?, ? )", array( $pParamHash['protector']['group_id'], $pParamHash['content_id'] ) );
 			} else {
-				foreach( $pParamHash['protector_group'] AS $groupId ) {
-					if ( $groupId != -1 )
+				foreach( $pParamHash['protector']['group_id'] AS $groupId ) {
+					if( $groupId != -1 )
 					$this->mDb->query( "INSERT INTO `".BIT_DB_PREFIX."liberty_content_group_map` ( `group_id`, `content_id` ) VALUES ( ?, ? )", array( $groupId, $pParamHash['content_id'] ) );
 				}
 			}
@@ -125,16 +125,17 @@ function protector_content_edit( &$pContent ) {
 	global $gProtector, $gBitUser, $gBitSmarty;
 	$groups = $gBitUser->getGroups();
 	$groups[-1]['group_name'] = "~~ System Default ~~";
+	ksort( $groups );
 	foreach( array_keys( $groups ) as $groupId ) {
-		if ( $groupId != -1 ) {
+		if( $groupId != -1 ) {
 			$protectorGroupsId[$groupId] = $groups[$groupId]['group_name'];
 		} else {
-			$protectorGroupsId[$groupId] = "~~System Default~~";
+			$protectorGroupsId[$groupId] = "~~ System Default ~~";
 		}
 	}
-	$serviceHash['protector_group'] = $gProtector->getProtectionList( $pContent->mContentId );
-	$prot = array_keys($serviceHash['protector_group']);
-	$serviceHash['protector_group_id'] = (empty($prot[0])? -1 : $prot[0]);
+	$serviceHash['protector']['group'] = $gProtector->getProtectionList( $pContent->mContentId );
+	$prot = array_keys( $serviceHash['protector']['group'] );
+	$serviceHash['protector']['group_id'] = ( empty( $prot[0] ) ? -1 : $prot[0] );
 	$gBitSmarty->assign_by_ref( 'serviceHash', $serviceHash );
 	$gBitSmarty->assign_by_ref( 'protectorGroupsId', $protectorGroupsId );
 	$gBitSmarty->assign_by_ref( 'protectorGroups', $groups );
