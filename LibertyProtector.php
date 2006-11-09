@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_protector/LibertyProtector.php,v 1.6 2006/11/01 12:59:23 lsces Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_protector/LibertyProtector.php,v 1.7 2006/11/09 09:17:57 lsces Exp $
  *
  * Copyright (c) 2004 bitweaver.org
  * Copyright (c) 2003 tikwiki.org
@@ -8,7 +8,7 @@
  * All Rights Reserved. See copyright.txt for details and a complete list of authors.
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
  *
- * $Id: LibertyProtector.php,v 1.6 2006/11/01 12:59:23 lsces Exp $
+ * $Id: LibertyProtector.php,v 1.7 2006/11/09 09:17:57 lsces Exp $
  * @package protector
  */
 
@@ -28,7 +28,7 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
  *
  * @author spider <spider@steelsun.com>
  *
- * @version $Revision: 1.6 $ $Date: 2006/11/01 12:59:23 $ $Author: lsces $
+ * @version $Revision: 1.7 $ $Date: 2006/11/09 09:17:57 $ $Author: lsces $
  */
 class LibertyProtector extends LibertyBase {
     /**
@@ -124,8 +124,13 @@ function protector_content_verify_access( &$pContent, &$pHash ) {
 function protector_content_edit( &$pContent ) {
 	global $gProtector, $gBitUser, $gBitSmarty;
 	$groups = $gBitUser->getGroups();
+	$groups[-1][group_name] = "~~System Default~~";
 	foreach( array_keys( $groups ) as $groupId ) {
-		$protectorGroupsId[$groupId] = $groups[$groupId]['group_name'];
+		if ( $groupId != -1 ) {
+			$protectorGroupsId[$groupId] = $groups[$groupId]['group_name'];
+		} else {
+			$protectorGroupsId[$groupId] = "~~System Default~~";
+		}
 	}
 	$serviceHash['protector_group'] = $gProtector->getProtectionList( $pContent->mContentId );
 	$prot = array_keys($serviceHash['protector_group']);
