@@ -5,8 +5,8 @@ $tables = array(
 'liberty_content_group_map' => "
 	content_id I4 PRIMARY,
 	group_id I4 PRIMARY
-	CONSTRAINT	', CONSTRAINT `protector_content_ref` FOREIGN KEY (`group_id`) REFERENCES `".BIT_DB_PREFIX."users_groups` (`group_id`)
-				 , CONSTRAINT `protector_group_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
+	CONSTRAINT	', CONSTRAINT `protector_group_ref` FOREIGN KEY (`group_id`) REFERENCES `".BIT_DB_PREFIX."users_groups` (`group_id`)
+				 , CONSTRAINT `protector_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
 ",
 
 );
