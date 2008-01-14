@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_protector/LibertyProtector.php,v 1.9 2006/11/09 19:47:49 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_protector/LibertyProtector.php,v 1.10 2008/01/14 09:58:16 lsces Exp $
  *
  * Copyright (c) 2004 bitweaver.org
  * Copyright (c) 2003 tikwiki.org
@@ -8,7 +8,7 @@
  * All Rights Reserved. See copyright.txt for details and a complete list of authors.
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
  *
- * $Id: LibertyProtector.php,v 1.9 2006/11/09 19:47:49 squareing Exp $
+ * $Id: LibertyProtector.php,v 1.10 2008/01/14 09:58:16 lsces Exp $
  * @package protector
  */
 
@@ -28,7 +28,7 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
  *
  * @author spider <spider@steelsun.com>
  *
- * @version $Revision: 1.9 $ $Date: 2006/11/09 19:47:49 $ $Author: squareing $
+ * @version $Revision: 1.10 $ $Date: 2008/01/14 09:58:16 $ $Author: lsces $
  */
 class LibertyProtector extends LibertyBase {
     /**
@@ -86,9 +86,11 @@ function protector_content_list() {
 	return $ret;
 }
 
-function protector_content_load() {
+function protector_content_load( &$pContent = NULL ) {
 	global $gBitUser;
+
 	$groups = array_keys($gBitUser->mGroups);
+	protector_content_verify_access( $pContent, $groups );
 	$ret = array(
 		'join_sql' => " LEFT JOIN `".BIT_DB_PREFIX."liberty_content_group_map` lcgm ON ( lc.`content_id`=lcgm.`content_id` ) LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON ( ugm.`group_id`=lcgm.`group_id` ) ",
 		'where_sql' => " AND (lcgm.`content_id` IS NULL OR lcgm.`group_id` IN(". implode(',', array_fill(0, count($groups), '?')) ." ) OR ugm.`user_id`=?) ",
@@ -117,7 +119,22 @@ function protector_content_display( &$pContent, &$pParamHash ) {
 
 function protector_content_verify_access( &$pContent, &$pHash ) {
 	global $gBitUser, $gBitSystem;
+
 	$error = NULL;
+	if( !$pContent->verifyId( $pContent->mContentId ) ) {
+// vd($pContent);
+// need to get ContentId if not set
+	}
+	if( $pContent->verifyId( $pContent->mContentId ) ) {
+		$query = "SELECT lc.`content_id`, lcgm.`group_id` as `is_protected`
+			FROM `".BIT_DB_PREFIX."liberty_content` lc 
+			LEFT JOIN `".BIT_DB_PREFIX."liberty_content_group_map` lcgm ON ( lc.`content_id`=lcgm.`content_id` ) LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON ( ugm.`user_id`=".$gBitUser->mUserId." ) AND ( ugm.`group_id`=lcgm.`group_id` ) 
+			WHERE lc.`content_id` = ?";
+		$ret = $pContent->mDb->getRow( $query, array( $pContent->mContentId ) );
+		if( $ret and is_numeric($ret['is_protected']) and !in_array( $ret['is_protected'], $pHash ) ) {
+			$gBitSystem->fatalError( tra( 'You do not have permission to access this '.$pContent->mType['content_description'] ), 'error.tpl', tra( 'Permission denied.' ) );
+		}
+	}
 	return $error;
 }
 
