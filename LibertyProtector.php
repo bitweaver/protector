@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_protector/LibertyProtector.php,v 1.10 2008/01/14 09:58:16 lsces Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_protector/LibertyProtector.php,v 1.11 2008/06/13 15:13:19 lsces Exp $
  *
  * Copyright (c) 2004 bitweaver.org
  * Copyright (c) 2003 tikwiki.org
@@ -8,7 +8,7 @@
  * All Rights Reserved. See copyright.txt for details and a complete list of authors.
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
  *
- * $Id: LibertyProtector.php,v 1.10 2008/01/14 09:58:16 lsces Exp $
+ * $Id: LibertyProtector.php,v 1.11 2008/06/13 15:13:19 lsces Exp $
  * @package protector
  */
 
@@ -28,7 +28,7 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
  *
  * @author spider <spider@steelsun.com>
  *
- * @version $Revision: 1.10 $ $Date: 2008/01/14 09:58:16 $ $Author: lsces $
+ * @version $Revision: 1.11 $ $Date: 2008/06/13 15:13:19 $ $Author: lsces $
  */
 class LibertyProtector extends LibertyBase {
     /**
@@ -58,6 +58,17 @@ class LibertyProtector extends LibertyBase {
 			}
 		}
 		return( count( $this->mErrors ) == 0 );
+	}
+
+    /**
+    * Delete entry(ies) from liberty_content_group_map table with content_id
+	**/
+	function expunge( $ContentId=NULL ) {
+		$ret = FALSE;
+		if( @BitBase::verifyId( $ContentId ) ) {
+			$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_content_group_map` WHERE `content_id`=?", array( $ContentId ) );
+		}
+		return $ret;
 	}
 
     /**
@@ -110,6 +121,12 @@ function protector_content_store( &$pObject, &$pParamHash ) {
 		}
 	}
 	return( $errors );
+}
+
+function protector_content_expunge( &$pContent = NULL ) {
+		if( @BitBase::verifyId( $pContent->mContentId ) ) {
+			$pContent->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_content_group_map` WHERE `content_id`=?", array( $pContent->mContentId ) );
+		}
 }
 
 function protector_content_display( &$pContent, &$pParamHash ) {
