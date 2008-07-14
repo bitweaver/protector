@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_protector/liberty_plugins/mime.flatdefault.php,v 1.1 2008/07/13 05:35:39 lsces Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_protector/liberty_plugins/mime.flatdefault.php,v 1.2 2008/07/14 08:46:17 lsces Exp $
  *
  * @author      xing  <xing@synapse.plus.com> - converted to 'flat file' lsces ,lester@lsces.co.uk>
- * @version     $Revision: 1.1 $
+ * @version     $Revision: 1.2 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -207,7 +207,7 @@ function mime_default_store( &$pStoreRow ) {
 			"attachment_id"          => $pStoreRow['attachment_id'],
 			"content_id"             => $pStoreRow['content_id'],
 			"attachment_plugin_guid" => !empty( $pStoreRow['attachment_plugin_guid'] ) ? $pStoreRow['attachment_plugin_guid'] : PLUGIN_MIME_GUID_FLATDEFAULT,
-			"foreign_id"             => $storeHash['file_id'],
+			"foreign_id"             => $pStoreRow['attachment_id'],
 			"user_id"                => $pStoreRow['user_id'],
 		);
 		$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_attachments", $storeHash );
@@ -388,7 +388,8 @@ function mime_default_expunge( $pAttachmentId ) {
  */
 function mime_default_path( $pAttachmentId ) {
 	$ret = FALSE;
-	if( @BitBase::verifyId( $pAttachmentHash['attachment_id'] ) ) {
+	if( @BitBase::verifyId( $pAttachmentId ) ) {
+		// STORAGE_PKG_URL should end with a '/' if set manually - not sure how this affects moving URL's for storage
 		$ret = str_replace( BIT_ROOT_URL, '', STORAGE_PKG_URL).FLAT_STORAGE_NAME.'/'.($pAttachmentId % 1000).'/'.$pAttachmentId.'/';
 	} 
 	return $ret;
