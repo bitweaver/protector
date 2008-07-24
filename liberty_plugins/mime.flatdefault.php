@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_protector/liberty_plugins/mime.flatdefault.php,v 1.2 2008/07/14 08:46:17 lsces Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_protector/liberty_plugins/mime.flatdefault.php,v 1.3 2008/07/24 18:00:48 spiderr Exp $
  *
  * @author      xing  <xing@synapse.plus.com> - converted to 'flat file' lsces ,lester@lsces.co.uk>
- * @version     $Revision: 1.2 $
+ * @version     $Revision: 1.3 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -11,7 +11,7 @@
  * As an alternative to storing file attachments in a user based storage tree, this version of mime.default.php
  * provides for a flat filing system based on id. A two level tree is currently provided bassed on a Mod 1000 trimming
  * of the id number for the first level directories. This limits each branch to a maximum of 1000 sub directories but 
- * a change the mime_default_path setting will allow other trimmimg to be implemented.
+ * a change the mime_flat_path setting will allow other trimmimg to be implemented.
  * 
  * Include 
  * define( 'LIBERTY_DEFAULT_MIME_HANDLER', 'mimeflatdefault' );
@@ -38,20 +38,20 @@ define( 'FLAT_STORAGE_NAME', 'attachments' );
 $pluginParams = array (
 	// Set of functions and what they are called in this paricular plugin
 	// Use the GUID as your namespace
-	'verify_function'    => 'mime_default_verify',
-	'store_function'     => 'mime_default_store',
-	'update_function'    => 'mime_default_update',
-	'load_function'      => 'mime_default_load',
-	'path_function' 	 => 'mime_default_path',
-	'download_function'  => 'mime_default_download',
-	'expunge_function'   => 'mime_default_expunge',
+	'verify_function'    => 'mime_flat_verify',
+	'store_function'     => 'mime_flat_store',
+	'update_function'    => 'mime_flat_update',
+	'load_function'      => 'mime_flat_load',
+	'path_function' 	 => 'mime_flat_path',
+	'download_function'  => 'mime_flat_download',
+	'expunge_function'   => 'mime_flat_expunge',
 	// Brief description of what the plugin does
 	'title'              => 'Default Flat File Handler',
 	'description'        => 'This mime handler can handle any file type, creates thumbnails when possible and will make the file available as an attachment under a flat file system.',
 	// Templates to display the files
-	'upload_tpl'         => 'bitpackage:liberty/mime_default_upload_inc.tpl',
-	'view_tpl'           => 'bitpackage:liberty/mime_default_view_inc.tpl',
-	'inline_tpl'         => 'bitpackage:liberty/mime_default_inline_inc.tpl',
+	'upload_tpl'         => 'bitpackage:liberty/mime_flat_upload_inc.tpl',
+	'view_tpl'           => 'bitpackage:liberty/mime_flat_view_inc.tpl',
+	'inline_tpl'         => 'bitpackage:liberty/mime_flat_inline_inc.tpl',
 	// This should be the same for all mime plugins
 	'plugin_type'        => MIME_PLUGIN,
 	// This needs to be specified by plugins that are included by other plugins
@@ -77,7 +77,7 @@ $gLibertySystem->registerPlugin( PLUGIN_MIME_GUID_FLATDEFAULT, $pluginParams );
  * @access public
  * @return TRUE on success, FALSE on failure - $pStoreRow['errors'] will contain reason
  */
-function mime_default_verify( &$pStoreRow ) {
+function mime_flat_verify( &$pStoreRow ) {
 	global $gBitSystem, $gBitUser;
 	$ret = FALSE;
 
@@ -113,7 +113,7 @@ function mime_default_verify( &$pStoreRow ) {
 
 		// Store all uploaded files in the flat tree storage area
 		if( empty( $pStoreRow['upload']['dest_path'] )) {
-			$pStoreRow['upload']['dest_path'] = mime_default_path( $pStoreRow['attachment_id'] );
+			$pStoreRow['upload']['dest_path'] = mime_flat_path( $pStoreRow['attachment_id'] );
 			// Use group number to protect disk content - still need to set group of directory! 
 			mkdir_p( BIT_ROOT_PATH.$pStoreRow['upload']['dest_path'], 0770 );
 		}
@@ -133,7 +133,7 @@ function mime_default_verify( &$pStoreRow ) {
  * @access public
  * @return TRUE on success, FALSE on failure - $pStoreRow['errors'] will contain reason
  */
-function mime_default_update( &$pStoreRow ) {
+function mime_flat_update( &$pStoreRow ) {
 	global $gBitSystem;
 
 	// this will reset the uploaded file
@@ -187,7 +187,7 @@ function mime_default_update( &$pStoreRow ) {
  * @access public
  * @return TRUE on success, FALSE on failure - $pStoreRow['errors'] will contain reason
  */
-function mime_default_store( &$pStoreRow ) {
+function mime_flat_store( &$pStoreRow ) {
 	global $gBitSystem, $gLibertySystem;
 	$ret = FALSE;
 	// take care of the uploaded file and insert it into the liberty_files and liberty_attachments tables
@@ -226,7 +226,7 @@ function mime_default_store( &$pStoreRow ) {
  * @access public
  * @return TRUE on success, FALSE on failure - ['errors'] will contain reason for failure
  */
-function mime_default_load( $pFileHash, &$pPrefs ) {
+function mime_flat_load( $pFileHash, &$pPrefs ) {
 	global $gBitSystem, $gLibertySystem;
 	$ret = FALSE;
 	if( @BitBase::verifyId( $pFileHash['attachment_id'] )) {
@@ -295,7 +295,7 @@ function mime_default_load( $pFileHash, &$pPrefs ) {
  * @access public
  * @return TRUE on success, FALSE on failure - $pParamHash['errors'] will contain reason for failure
  */
-function mime_default_download( &$pFileHash ) {
+function mime_flat_download( &$pFileHash ) {
 	global $gBitSystem;
 	$ret = FALSE;
 
@@ -355,7 +355,7 @@ function mime_default_download( &$pFileHash ) {
  * @access public
  * @return TRUE on success, FALSE on failure
  */
-function mime_default_expunge( $pAttachmentId ) {
+function mime_flat_expunge( $pAttachmentId ) {
 	global $gBitSystem, $gBitUser;
 	$ret = FALSE;
 	if( @BitBase::verifyId( $pAttachmentId )) {
@@ -386,7 +386,7 @@ function mime_default_expunge( $pAttachmentId ) {
  * @access public
  * @return string containing path to storage location for attachment
  */
-function mime_default_path( $pAttachmentId ) {
+function mime_flat_path( $pAttachmentId ) {
 	$ret = FALSE;
 	if( @BitBase::verifyId( $pAttachmentId ) ) {
 		// STORAGE_PKG_URL should end with a '/' if set manually - not sure how this affects moving URL's for storage
