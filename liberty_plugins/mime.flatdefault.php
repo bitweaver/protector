@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_protector/liberty_plugins/mime.flatdefault.php,v 1.4 2008/07/26 16:29:18 lsces Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_protector/liberty_plugins/mime.flatdefault.php,v 1.5 2008/08/05 17:51:52 lsces Exp $
  *
  * @author      xing  <xing@synapse.plus.com> - converted to 'flat file' lsces ,lester@lsces.co.uk>
- * @version     $Revision: 1.4 $
+ * @version     $Revision: 1.5 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -11,7 +11,7 @@
  * As an alternative to storing file attachments in a user based storage tree, this version of mime.default.php
  * provides for a flat filing system based on id. A two level tree is currently provided bassed on a Mod 1000 trimming
  * of the id number for the first level directories. This limits each branch to a maximum of 1000 sub directories but 
- * a change the mime_flat_path setting will allow other trimmimg to be implemented.
+ * a change the mime_default_path setting will allow other trimmimg to be implemented.
  * 
  * Include 
  * define( 'LIBERTY_DEFAULT_MIME_HANDLER', 'mimeflatdefault' );
@@ -114,7 +114,7 @@ if( !function_exists( 'mime_default_verify' )) {
 
 			// Store all uploaded files in the flat tree storage area
 			if( empty( $pStoreRow['upload']['dest_path'] )) {
-				$pStoreRow['upload']['dest_path'] = mime_flat_path( $pStoreRow['attachment_id'] );
+				$pStoreRow['upload']['dest_path'] = mime_default_path( $pStoreRow['attachment_id'] );
 				// Use group number to protect disk content - still need to set group of directory! 
 				mkdir_p( BIT_ROOT_PATH.$pStoreRow['upload']['dest_path'], 0770 );
 			}	
