@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_protector/liberty_plugins/mime.flatdefault.php,v 1.5 2008/08/05 17:51:52 lsces Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_protector/liberty_plugins/mime.flatdefault.php,v 1.6 2008/08/10 09:29:45 lsces Exp $
  *
  * @author      xing  <xing@synapse.plus.com> - converted to 'flat file' lsces ,lester@lsces.co.uk>
- * @version     $Revision: 1.5 $
+ * @version     $Revision: 1.6 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -403,6 +403,7 @@ if( !function_exists( 'mime_default_path' )) {
 		$ret = FALSE;
 		if( @BitBase::verifyId( $pAttachmentId ) ) {
 			// STORAGE_PKG_URL should end with a '/' if set manually - not sure how this affects moving URL's for storage
+			// There is a difference comewhere between windows and linux on this!
 			$ret = str_replace( BIT_ROOT_URL, '', STORAGE_PKG_URL).FLAT_STORAGE_NAME.'/'.($pAttachmentId % 1000).'/'.$pAttachmentId.'/';
 		} 
 		return $ret;
