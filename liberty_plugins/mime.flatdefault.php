@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_protector/liberty_plugins/mime.flatdefault.php,v 1.6 2008/08/10 09:29:45 lsces Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_protector/liberty_plugins/mime.flatdefault.php,v 1.7 2008/12/24 06:38:29 lsces Exp $
  *
  * @author      xing  <xing@synapse.plus.com> - converted to 'flat file' lsces ,lester@lsces.co.uk>
- * @version     $Revision: 1.6 $
+ * @version     $Revision: 1.7 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -86,6 +86,12 @@ if( !function_exists( 'mime_default_verify' )) {
 		// er... or at least admin if somehow we have a NULL mUserId - anon uploads maybe?
 		$pStoreRow['user_id'] = @BitBase::verifyId( $gBitUser->mUserId ) ? $gBitUser->mUserId : ROOT_USER_ID;
 
+		// Bypass p_liberty_attach_attachments for managed uploads - access controlled by fisheye/treasury or other uploader
+		// Ignore warning when p_liberty_attach_attachments totally disabled
+		// if( $this->hasUserPermission( 'p_liberty_manage_attachments' )) {
+			$pStoreRow['no_perm_check'] = true;
+		// }
+		
 		if( !empty( $pStoreRow['upload']['tmp_name'] ) && is_file( $pStoreRow['upload']['tmp_name'] )) {
 			// attachment_id is only set when we are updating the file
 			if( @BitBase::verifyId( $pStoreRow['upload']['attachment_id'] )) {
