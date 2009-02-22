@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_protector/liberty_plugins/mime.flatdefault.php,v 1.7 2008/12/24 06:38:29 lsces Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_protector/liberty_plugins/mime.flatdefault.php,v 1.8 2009/02/22 19:13:37 lsces Exp $
  *
  * @author      xing  <xing@synapse.plus.com> - converted to 'flat file' lsces ,lester@lsces.co.uk>
- * @version     $Revision: 1.7 $
+ * @version     $Revision: 1.8 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -49,9 +49,11 @@ $pluginParams = array (
 	'title'              => 'Default Flat File Handler',
 	'description'        => 'This mime handler can handle any file type, creates thumbnails when possible and will make the file available as an attachment under a flat file system.',
 	// Templates to display the files
-	'upload_tpl'         => 'bitpackage:liberty/mime_default_upload_inc.tpl',
-	'view_tpl'           => 'bitpackage:liberty/mime_default_view_inc.tpl',
-	'inline_tpl'         => 'bitpackage:liberty/mime_default_inline_inc.tpl',
+	'upload_tpl'         => 'bitpackage:liberty/mime/default/upload.tpl',
+	'view_tpl'           => 'bitpackage:liberty/mime/default/view.tpl',
+	'inline_tpl'         => 'bitpackage:liberty/mime/default/inline.tpl',
+	'storage_tpl'        => 'bitpackage:liberty/mime/default/storage.tpl',
+	'attachment_tpl'     => 'bitpackage:liberty/mime/default/attachment.tpl',
 	// This should be the same for all mime plugins
 	'plugin_type'        => MIME_PLUGIN,
 	// This needs to be specified by plugins that are included by other plugins
