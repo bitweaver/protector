@@ -1,14 +1,14 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_protector/LibertyProtector.php,v 1.11 2008/06/13 15:13:19 lsces Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_protector/LibertyProtector.php,v 1.12 2009/10/01 13:45:46 wjames5 Exp $
  *
  * Copyright (c) 2004 bitweaver.org
  * Copyright (c) 2003 tikwiki.org
  * Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
  * All Rights Reserved. See copyright.txt for details and a complete list of authors.
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See http://www.gnu.org/copyleft/lesser.html for details
  *
- * $Id: LibertyProtector.php,v 1.11 2008/06/13 15:13:19 lsces Exp $
+ * $Id: LibertyProtector.php,v 1.12 2009/10/01 13:45:46 wjames5 Exp $
  * @package protector
  */
 
@@ -28,7 +28,7 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
  *
  * @author spider <spider@steelsun.com>
  *
- * @version $Revision: 1.11 $ $Date: 2008/06/13 15:13:19 $ $Author: lsces $
+ * @version $Revision: 1.12 $ $Date: 2009/10/01 13:45:46 $ $Author: wjames5 $
  */
 class LibertyProtector extends LibertyBase {
     /**
