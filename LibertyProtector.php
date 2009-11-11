@@ -1,14 +1,14 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_protector/LibertyProtector.php,v 1.13 2009/10/01 14:17:03 wjames5 Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_protector/LibertyProtector.php,v 1.14 2009/11/11 17:45:06 lsces Exp $
  *
  * Copyright (c) 2004 bitweaver.org
  * Copyright (c) 2003 tikwiki.org
  * Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
- * All Rights Reserved. See below for details and a complete list of authors.
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See http://www.gnu.org/copyleft/lesser.html for details
+ * All Rights Reserved. See copyright.txt for details and a complete list of authors.
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
  *
- * $Id: LibertyProtector.php,v 1.13 2009/10/01 14:17:03 wjames5 Exp $
+ * $Id: LibertyProtector.php,v 1.14 2009/11/11 17:45:06 lsces Exp $
  * @package protector
  */
 
@@ -28,7 +28,7 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
  *
  * @author spider <spider@steelsun.com>
  *
- * @version $Revision: 1.13 $ $Date: 2009/10/01 14:17:03 $ $Author: wjames5 $
+ * @version $Revision: 1.14 $ $Date: 2009/11/11 17:45:06 $ $Author: lsces $
  */
 class LibertyProtector extends LibertyBase {
     /**
@@ -116,6 +116,21 @@ function protector_content_store( &$pObject, &$pParamHash ) {
 	$errors = NULL;
 	// If a content access system is active, let's call it
 	if( $gBitSystem->isPackageActive( 'protector' ) ) {
+		if( !$gProtector->storeProtection( $pParamHash ) ) {
+			$errors['protector'] = $gProtector->mErrors['security'];
+		}
+	}
+	return( $errors );
+}
+
+function protector_comment_store( &$pContent, &$pParamHash ) {
+	global $gBitSystem, $gProtector;
+	$errors = NULL;
+	// If a content access system is active, let's call it
+	if( $gBitSystem->isPackageActive( 'protector' ) ) {
+		if( isset( $pParamHash['comments_parent_id'] ) ) {
+			$pParamHash['protector']['group_id'] = $pContent->mDb->GetOne( "SELECT `group_id` FROM `".BIT_DB_PREFIX."liberty_content_group_map` WHERE `content_id`=?", array( $pParamHash['comments_parent_id'] ) );
+		}
 		if( !$gProtector->storeProtection( $pParamHash ) ) {
 			$errors['protector'] = $gProtector->mErrors['security'];
 		}

@@ -16,6 +16,7 @@ if( $gBitSystem->isPackageActive( 'protector' ) ) {
 		'content_preview_function' => 'protector_content_edit',
 		'content_edit_function' => 'protector_content_edit',
 		'content_store_function' => 'protector_content_store',
+		'comment_store_function' => 'protector_comment_store',
 		'content_expunge_function' => 'protector_content_expunge',
 		'content_list_sql_function' => 'protector_content_list',
 		'content_load_sql_function' => 'protector_content_load',
