@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_protector/LibertyProtector.php,v 1.15 2009/11/22 11:11:30 lsces Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_protector/LibertyProtector.php,v 1.16 2009/11/22 12:41:24 lsces Exp $
  *
  * Copyright (c) 2004 bitweaver.org
  * Copyright (c) 2003 tikwiki.org
@@ -8,7 +8,7 @@
  * All Rights Reserved. See copyright.txt for details and a complete list of authors.
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
  *
- * $Id: LibertyProtector.php,v 1.15 2009/11/22 11:11:30 lsces Exp $
+ * $Id: LibertyProtector.php,v 1.16 2009/11/22 12:41:24 lsces Exp $
  * @package protector
  */
 
@@ -28,7 +28,7 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
  *
  * @author spider <spider@steelsun.com>
  *
- * @version $Revision: 1.15 $ $Date: 2009/11/22 11:11:30 $ $Author: lsces $
+ * @version $Revision: 1.16 $ $Date: 2009/11/22 12:41:24 $ $Author: lsces $
  */
 class LibertyProtector extends LibertyBase {
     /**
@@ -89,8 +89,8 @@ function protector_content_list() {
 	global $gBitUser;
 	$groups = array_keys($gBitUser->mGroups);
 	$ret = array(
-		'join_sql' => " LEFT JOIN `".BIT_DB_PREFIX."liberty_content_group_map` lcgm ON ( lc.`content_id`=lcgm.`content_id` ) LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON ( ugm.`user_id`=".$gBitUser->mUserId." ) AND ( ugm.`group_id`=lcgm.`group_id` ) ",
-		'where_sql' => " AND (lcgm.`content_id` IS NULL OR lcgm.`group_id` IN(". implode(',', array_fill(0, count($groups), '?')) ." ) OR ugm.`user_id`=?) ",
+		'join_sql' => " LEFT JOIN `".BIT_DB_PREFIX."liberty_content_group_map` lcgm ON ( lc.`content_id`=lcgm.`content_id` ) LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` pugm ON ( pugm.`user_id`=".$gBitUser->mUserId." ) AND ( pugm.`group_id`=lcgm.`group_id` ) ",
+		'where_sql' => " AND (lcgm.`content_id` IS NULL OR lcgm.`group_id` IN(". implode(',', array_fill(0, count($groups), '?')) ." ) OR pugm.`user_id`=?) ",
 		'bind_vars' => array_merge( $groups, array( $gBitUser->mUserId ) ),
 	);
 //	$ret['bind_vars'] = array_merge( $groups, array( $gBitUser->mUserId ) );
