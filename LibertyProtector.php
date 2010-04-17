@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_protector/LibertyProtector.php,v 1.18 2009/11/25 22:18:01 lsces Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_protector/LibertyProtector.php,v 1.19 2010/04/17 15:36:07 wjames5 Exp $
  *
  * Copyright (c) 2004 bitweaver.org
  * Copyright (c) 2003 tikwiki.org
@@ -8,7 +8,7 @@
  * All Rights Reserved. See copyright.txt for details and a complete list of authors.
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
  *
- * $Id: LibertyProtector.php,v 1.18 2009/11/25 22:18:01 lsces Exp $
+ * $Id: LibertyProtector.php,v 1.19 2010/04/17 15:36:07 wjames5 Exp $
  * @package protector
  */
 
@@ -28,7 +28,7 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
  *
  * @author spider <spider@steelsun.com>
  *
- * @version $Revision: 1.18 $ $Date: 2009/11/25 22:18:01 $ $Author: lsces $
+ * @version $Revision: 1.19 $ $Date: 2010/04/17 15:36:07 $ $Author: wjames5 $
  */
 class LibertyProtector extends LibertyBase {
     /**
@@ -164,7 +164,7 @@ function protector_content_verify_access( &$pContent, &$pHash ) {
 			WHERE lc.`content_id` = ?";
 		$ret = $pContent->mDb->getRow( $query, array( $pContent->mContentId ) );
 		if( $ret and is_numeric($ret['is_protected']) and !in_array( $ret['is_protected'], $pHash ) ) {
-			$gBitSystem->fatalError( tra( 'You do not have permission to access this '.$pContent->mType['content_description'] ), 'error.tpl', tra( 'Permission denied.' ) );
+			$gBitSystem->fatalError( tra( 'You do not have permission to access this '.$pContent->getContentTypeName() ), 'error.tpl', tra( 'Permission denied.' ) );
 		}
 	}
 	return $error;
