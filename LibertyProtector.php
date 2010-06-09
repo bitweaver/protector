@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_protector/LibertyProtector.php,v 1.19 2010/04/17 15:36:07 wjames5 Exp $
+ * @version $Header$
  *
  * Copyright (c) 2004 bitweaver.org
  * Copyright (c) 2003 tikwiki.org
@@ -8,7 +8,7 @@
  * All Rights Reserved. See copyright.txt for details and a complete list of authors.
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
  *
- * $Id: LibertyProtector.php,v 1.19 2010/04/17 15:36:07 wjames5 Exp $
+ * $Id$
  * @package protector
  */
 
@@ -28,7 +28,7 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
  *
  * @author spider <spider@steelsun.com>
  *
- * @version $Revision: 1.19 $ $Date: 2010/04/17 15:36:07 $ $Author: wjames5 $
+ * @version $Revision$
  */
 class LibertyProtector extends LibertyBase {
     /**

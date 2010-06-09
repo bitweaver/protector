@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_protector/liberty_plugins/mime.flatdefault.php,v 1.8 2009/02/22 19:13:37 lsces Exp $
+ * @version     $Header$
  *
  * @author      xing  <xing@synapse.plus.com> - converted to 'flat file' lsces ,lester@lsces.co.uk>
- * @version     $Revision: 1.8 $
+ * @version     $Revision$
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
