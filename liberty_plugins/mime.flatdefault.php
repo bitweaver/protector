@@ -16,9 +16,6 @@
  * Include 
  * define( 'LIBERTY_DEFAULT_MIME_HANDLER', 'mimeflatdefault' );
  * in config_inc.php to activate
- * @TODO Little chicken and egg problem here - not sure how to select when installing
- *
- * @TODO Set up new directories to have an owner/group set to restict access to correct users
  *
  **/
 

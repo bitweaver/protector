@@ -2,10 +2,10 @@
 
 $tables = array(
 
-'liberty_content_group_map' => "
+'liberty_content_role_map' => "
 	content_id I4 PRIMARY,
-	group_id I4 PRIMARY
-	CONSTRAINT	', CONSTRAINT `protector_group_ref` FOREIGN KEY (`group_id`) REFERENCES `".BIT_DB_PREFIX."users_groups` (`group_id`)
+	role_id I4 PRIMARY
+	CONSTRAINT	', CONSTRAINT `protector_role_ref` FOREIGN KEY (`role_id`) REFERENCES `".BIT_DB_PREFIX."users_groups` (`group_id`)
 				 , CONSTRAINT `protector_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
 ",
 
@@ -18,7 +18,7 @@ foreach( array_keys( $tables ) AS $tableName ) {
 }
 
 $gBitInstaller->registerPackageInfo( PROTECTOR_PKG_NAME, array(
-	'description' => "Protector restricts access to content based on groups.",
+	'description' => "Protector restricts access to content based on user roles.",
 	'license' => '<a href="http://www.gnu.org/licenses/licenses.html#LGPL">LGPL</a>',
 ) );
 
@@ -47,6 +47,6 @@ $gBitInstaller->registerPreferences( PROTECTOR_PKG_NAME, array(
 	array(PROTECTOR_PKG_NAME, 'protector_list_content_id','y'),
 	array(PROTECTOR_PKG_NAME, 'protector_list_title','y'),
 	array(PROTECTOR_PKG_NAME, 'protector_list_description','y'),
-	array(PROTECTOR_PKG_NAME, 'protector_single_group','y'),
+	array(PROTECTOR_PKG_NAME, 'protector_single_role','y'),
 ) );
 ?>
