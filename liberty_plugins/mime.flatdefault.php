@@ -10,10 +10,10 @@
  *
  * As an alternative to storing file attachments in a user based storage tree, this version of mime.default.php
  * provides for a flat filing system based on id. A two level tree is currently provided bassed on a Mod 1000 trimming
- * of the id number for the first level directories. This limits each branch to a maximum of 1000 sub directories but 
- * a change the mime_default_path setting will allow other trimmimg to be implemented.
- * 
- * Include 
+ * of the id number for the first level directories. This limits each branch to a maximum of 1000 sub directories but
+ * a change the mime_default_branch setting will allow other trimmimg to be implemented.
+ *
+ * Include
  * define( 'LIBERTY_DEFAULT_MIME_HANDLER', 'mimeflatdefault' );
  * in config_inc.php to activate
  *
@@ -39,7 +39,7 @@ $pluginParams = array (
 	'store_function'     => 'mime_default_store',
 	'update_function'    => 'mime_default_update',
 	'load_function'      => 'mime_default_load',
-	'path_function' 	 => 'mime_default_path',
+	'branch_function' 	 => 'mime_default_branch',
 	'download_function'  => 'mime_default_download',
 	'expunge_function'   => 'mime_default_expunge',
 	// Brief description of what the plugin does
@@ -112,17 +112,17 @@ if( !function_exists( 'mime_default_verify' )) {
 				} else {
 					$pStoreRow['attachment_id'] = $pStoreRow['content_id'];
 				}
-			}	
+			}
 
 			// Generic values needed by the storing mechanism
 			$pStoreRow['upload']['source_file'] = $pStoreRow['upload']['tmp_name'];
 
 			// Store all uploaded files in the flat tree storage area
-			if( empty( $pStoreRow['upload']['dest_path'] )) {
-				$pStoreRow['upload']['dest_path'] = mime_default_path( $pStoreRow['attachment_id'] );
-				// Use group number to protect disk content - still need to set group of directory! 
-				mkdir_p( BIT_ROOT_PATH.$pStoreRow['upload']['dest_path'], 0770 );
-			}	
+			if( empty( $pStoreRow['upload']['dest_branch'] )) {
+				$pStoreRow['upload']['dest_branch'] = mime_default_branch( $pStoreRow['attachment_id'] );
+				// Use group number to protect disk content - still need to set group of directory!
+				mkdir_p( BIT_ROOT_PATH.$pStoreRow['upload']['dest_branch'], 0770 );
+			}
 
 			$ret = TRUE;
 		} else {
@@ -147,7 +147,7 @@ if( !function_exists( 'mime_default_update' )) {
 		// this will reset the uploaded file
 		if( BitBase::verifyId( $pStoreRow['attachment_id'] ) && !empty( $pStoreRow['upload'] )) {
 			if( empty( $pStoreRow['dest_branch'] )) {
-				$pStoreRow['dest_branch'] = liberty_mime_get_storage_branch( array( 'attachment_id' => $row['attachment_id'] ) );
+				$pStoreRow['dest_branch'] = liberty_mime_get_storage_branch( array( 'attachment_id' => $pStoreRow['attachment_id'] ) );
 			}
 
 			if( !empty( $pStoreRow['dest_branch'] ) && !empty( $pStoreRow['file_name'] ) ) {
@@ -386,11 +386,11 @@ if( !function_exists( 'mime_default_expunge' )) {
 		global $gBitSystem, $gBitUser;
 		$ret = FALSE;
 		if( @BitBase::verifyId( $pAttachmentId )) {
-			if( $fileHash = LibertyMime::getAttachment( $pAttachmentId )) {
-				if( $gBitUser->isAdmin() || $gBitUser->mUserId == $fileHash['user_id'] && !empty( $fileHash['source_file'] )) {
+			if( $fileHash = LibertyMime::loadAttachment( $pAttachmentId )) {
+				if( $gBitUser->isAdmin() || $gBitUser->mUserId == $fileHash['user_id'] && isset( $fileHash['source_file'] ) && !empty( $fileHash['source_file'] )) {
 					// make sure this is a valid storage directory before removing it
-					if(( $nuke = LibertyMime::validateStoragePath( $fileHash['source_file'] )) && is_file( $nuke )) {
-						unlink_r( dirname( $nuke ));
+					if( preg_match( "#^".realpath( STORAGE_PKG_PATH )."/attachments/\d+/\d+/#", $fileHash['source_file'] ) && is_file( $fileHash['source_file'] )) {
+						unlink_r( dirname( $fileHash['source_file'] ));
 					}
 					$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_files` WHERE `file_id` = ?";
 					$gBitSystem->mDb->query( $query, array( $fileHash['foreign_id'] ));
@@ -403,23 +403,17 @@ if( !function_exists( 'mime_default_expunge' )) {
 }
 
 /**
- * Generate path from Id
+ * Generate branch from Id
  * 
  * @param integer $pAttachmentId The id of the attachment to access
  * @access public
  * @return string containing path to storage location for attachment
  */
-if( !function_exists( 'mime_default_path' )) {
-	function mime_default_path( $pAttachmentId ) {
+if( !function_exists( 'mime_default_branch' )) {
+	function mime_default_branch( $pAttachmentId ) {
 		$ret = FALSE;
 		if( @BitBase::verifyId( $pAttachmentId ) ) {
-			// STORAGE_PKG_URL should end with a '/' if set manually - not sure how this affects moving URL's for storage
-			// There is a difference comewhere between windows and linux on this!
-			if ( is_windows() ) {
-			$ret = str_replace( BIT_ROOT_URL, '', STORAGE_PKG_URL).FLAT_STORAGE_NAME.'/'.($pAttachmentId % 1000).'/'.$pAttachmentId.'/';
-			} else {
-				$ret = str_replace( BIT_ROOT_URL, '', STORAGE_PKG_URL).'/'.FLAT_STORAGE_NAME.'/'.($pAttachmentId % 1000).'/'.$pAttachmentId.'/';
-		} 
+			$ret = FLAT_STORAGE_NAME.'/'.($pAttachmentId % 1000).'/'.$pAttachmentId.'/';
 		}
 		return $ret;
 	}
