@@ -70,7 +70,7 @@ $gLibertySystem->registerPlugin( PLUGIN_MIME_GUID_FLATDEFAULT, $pluginParams );
 
 /**
  * Sanitise and validate data before it's stored
- * 
+ *
  * @param array $pStoreRow Hash of data that needs to be stored
  * @param array $pStoreRow['upload'] Hash passed in by $_FILES upload
  * @access public
@@ -90,7 +90,7 @@ if( !function_exists( 'mime_default_verify' )) {
 		// if( $this->hasUserPermission( 'p_liberty_manage_attachments' )) {
 			$pStoreRow['no_perm_check'] = true;
 		// }
-		
+
 		if( !empty( $pStoreRow['upload']['tmp_name'] ) && is_file( $pStoreRow['upload']['tmp_name'] )) {
 			// attachment_id is only set when we are updating the file
 			if( @BitBase::verifyId( $pStoreRow['upload']['attachment_id'] )) {
@@ -135,7 +135,7 @@ if( !function_exists( 'mime_default_verify' )) {
 
 /**
  * When a file is edited
- * 
+ *
  * @param array $pStoreRow File data needed to store details in the database - sanitised and generated in the verify function
  * @access public
  * @return TRUE on success, FALSE on failure - $pStoreRow['errors'] will contain reason
@@ -196,7 +196,7 @@ if( !function_exists( 'mime_default_update' )) {
 
 /**
  * Store the data in the database
- * 
+ *
  * @param array $pStoreRow File data needed to store details in the database - sanitised and generated in the verify function
  * @access public
  * @return TRUE on success, FALSE on failure - $pStoreRow['errors'] will contain reason
@@ -210,12 +210,12 @@ if( !function_exists( 'mime_default_store' )) {
 			// add row to liberty_files
 			$storeHash = array(
 				"file_name" => $pStoreRow['upload']['name'],
-				"file_id"      => $pStoreRow['attachment_id'],
-				"mime_type"    => $pStoreRow['upload']['type'],
-				"file_size"    => $pStoreRow['upload']['size'],
-				"user_id"      => $pStoreRow['user_id'],
+				"file_id"   => $pStoreRow['attachment_id'],
+				"mime_type" => $pStoreRow['upload']['type'],
+				"file_size" => $pStoreRow['upload']['size'],
+				"user_id"   => $pStoreRow['user_id'],
 			);
-			$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_files", $storeHash );	
+			$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_files", $storeHash );
 
 			// add the data into liberty_attachments to make this file available as attachment
 			$storeHash = array(
@@ -237,7 +237,7 @@ if( !function_exists( 'mime_default_store' )) {
 
 /**
  * Load file data from the database
- * 
+ *
  * @param array $pFileHash contains all file information
  * @access public
  * @return TRUE on success, FALSE on failure - ['errors'] will contain reason for failure
@@ -246,7 +246,7 @@ if( !function_exists( 'mime_default_load' )) {
 	function mime_default_load( $pFileHash, &$pPrefs ) {
 		global $gBitSystem, $gLibertySystem;
 		$ret = FALSE;
-		if( @BitBase::verifyId( $pFileHash['attachment_id'] )) {
+	if( @BitBase::verifyId( $pFileHash['attachment_id'] )) {
 			$query = "
 				SELECT *
 				FROM `".BIT_DB_PREFIX."liberty_attachments` la
@@ -314,7 +314,7 @@ if( !function_exists( 'mime_default_load' )) {
 /**
  * Takes care of the entire download process. Make sure it doesn't die at the end.
  * in this functioin it would be possible to add download resume possibilites and the like
- * 
+ *
  * @param array $pFileHash Basically the same has as returned by the load function
  * @access public
  * @return TRUE on success, FALSE on failure - $pParamHash['errors'] will contain reason for failure
@@ -348,7 +348,7 @@ if( !function_exists( 'mime_default_download' )) {
 					@ob_end_clean();
 				}
 
-				// this will get the browser to open the download dialogue - even when the 
+				// this will get the browser to open the download dialogue - even when the
 				// browser could deal with the content type - not perfect, but works
 				if( $gBitSystem->isFeatureActive( 'mime_force_download' )) {
 					$pFileHash['mime_type'] = "application/force-download";
@@ -376,7 +376,7 @@ if( !function_exists( 'mime_default_download' )) {
 
 /**
  * Nuke data in tables when content is removed
- * 
+ *
  * @param integer $pAttachmentId The id of the attachment to delete
  * @access public
  * @return TRUE on success, FALSE on failure
@@ -404,7 +404,7 @@ if( !function_exists( 'mime_default_expunge' )) {
 
 /**
  * Generate branch from Id
- * 
+ *
  * @param integer $pAttachmentId The id of the attachment to access
  * @access public
  * @return string containing path to storage location for attachment
