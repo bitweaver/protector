@@ -34,9 +34,9 @@ class LibertyProtector extends LibertyBase {
     /**
     * During initialisation, be sure to call our base constructors
 	**/
-	function LibertyProtector( $pContentId=NULL ) {
+	function __construct( $pContentId=NULL ) {
 		$this->mContentId = $pContentId;
-		LibertyBase::LibertyBase();
+		parent::__construct();
 	}
 
     /**
