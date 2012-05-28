@@ -40,20 +40,20 @@ class LibertyProtector extends LibertyBase {
 	}
 
     /**
-    * Update the liberty_content_group_map table with corrected group_id(s)
+    * Update the liberty_content_role_map table with corrected role_id(s)
     * In -1 for anonymouse is not stored, switching content to anonymouse will clear array 
 	**/
 	function storeProtection( &$pParamHash ) {
 		global $gBitSystem;
-		if( @BitBase::verifyId( $pParamHash['protector']['group_id'] ) ) {
-			$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_content_group_map` WHERE `content_id`=?", array( $pParamHash['content_id'] ) );
-			if( $gBitSystem->isFeatureActive( 'protector_single_group' ) ) {
-				if( $pParamHash['protector']['group_id'] != -1 )
-					$this->mDb->query( "INSERT INTO `".BIT_DB_PREFIX."liberty_content_group_map` ( `group_id`, `content_id` ) VALUES ( ?, ? )", array( $pParamHash['protector']['group_id'], $pParamHash['content_id'] ) );
+		if( @BitBase::verifyId( $pParamHash['protector']['role_id'] ) ) {
+			$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_content_role_map` WHERE `content_id`=?", array( $pParamHash['content_id'] ) );
+			if( $gBitSystem->isFeatureActive( 'protector_single_role' ) ) {
+				if( $pParamHash['protector']['role_id'] != -1 )
+					$this->mDb->query( "INSERT INTO `".BIT_DB_PREFIX."liberty_content_role_map` ( `role_id`, `content_id` ) VALUES ( ?, ? )", array( $pParamHash['protector']['role_id'], $pParamHash['content_id'] ) );
 			} else {
-				foreach( $pParamHash['protector']['group_id'] AS $groupId ) {
-					if( $groupId != -1 )
-					$this->mDb->query( "INSERT INTO `".BIT_DB_PREFIX."liberty_content_group_map` ( `group_id`, `content_id` ) VALUES ( ?, ? )", array( $groupId, $pParamHash['content_id'] ) );
+				foreach( $pParamHash['protector']['role_id'] AS $roleId ) {
+					if( $roleId != -1 )
+					$this->mDb->query( "INSERT INTO `".BIT_DB_PREFIX."liberty_content_role_map` ( `role_id`, `content_id` ) VALUES ( ?, ? )", array( $roleId, $pParamHash['content_id'] ) );
 				}
 			}
 		}
@@ -61,25 +61,25 @@ class LibertyProtector extends LibertyBase {
 	}
 
     /**
-    * Delete entry(ies) from liberty_content_group_map table with content_id
+    * Delete entry(ies) from liberty_content_role_map table with content_id
 	**/
 	function expunge( $ContentId=NULL ) {
 		$ret = FALSE;
 		if( @BitBase::verifyId( $ContentId ) ) {
-			$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_content_group_map` WHERE `content_id`=?", array( $ContentId ) );
+			$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_content_role_map` WHERE `content_id`=?", array( $ContentId ) );
 		}
 		return $ret;
 	}
 
     /**
-    * Return liberty_content_group_map for selected content_id
+    * Return liberty_content_role_map for selected content_id
     * Ret -1 for anonymouse if alternatives are not stored
 	**/
 	function getProtectionList( $ContentId=NULL ) {
 		global $gBitSystem;
 		$ret = array( '-1' <= $ContentId );
 		if( isset( $ContentId ) ) {
-			$ret = $this->mDb->GetAssoc( "SELECT `group_id`, `content_id` FROM `".BIT_DB_PREFIX."liberty_content_group_map` WHERE `content_id`=?", array( $ContentId ) );
+			$ret = $this->mDb->GetAssoc( "SELECT `role_id`, `content_id` FROM `".BIT_DB_PREFIX."liberty_content_role_map` WHERE `content_id`=?", array( $ContentId ) );
 		}
 		return $ret;
 	}
@@ -87,27 +87,26 @@ class LibertyProtector extends LibertyBase {
 
 function protector_content_list() {
 	global $gBitUser;
-	$groups = array_keys($gBitUser->mGroups);
+	$roles = array_keys($gBitUser->mRoles);
 	$ret = array(
-		'join_sql' => " LEFT JOIN `".BIT_DB_PREFIX."liberty_content_group_map` lcgm ON ( lc.`content_id`=lcgm.`content_id` ) LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` pugm ON ( pugm.`user_id`=".$gBitUser->mUserId." ) AND ( pugm.`group_id`=lcgm.`group_id` ) ",
-		'where_sql' => " AND (lcgm.`content_id` IS NULL OR lcgm.`group_id` IN(". implode(',', array_fill(0, count($groups), '?')) ." ) OR pugm.`user_id`=?) ",
-		'bind_vars' => array_merge( $groups, array( $gBitUser->mUserId ) ),
+		'join_sql' => " LEFT JOIN `".BIT_DB_PREFIX."liberty_content_role_map` lcrm ON ( lc.`content_id`=lcrm.`content_id` ) LEFT OUTER JOIN `".BIT_DB_PREFIX."users_roles_map` purm ON ( purm.`user_id`=".$gBitUser->mUserId." ) AND ( purm.`role_id`=lcrm.`role_id` ) ",
+		'where_sql' => " AND (lcrm.`content_id` IS NULL OR lcrm.`role_id` IN(". implode(',', array_fill(0, count($roles), '?')) ." ) OR purm.`user_id`=?) ",
+		'bind_vars' => array_merge( $roles, array( $gBitUser->mUserId ) ),
 	);
-//	$ret['bind_vars'] = array_merge( $groups, array( $gBitUser->mUserId ) );
 	return $ret;
 }
 
 function protector_content_load( &$pContent = NULL ) {
 	global $gBitUser;
 
-	$groups = array_keys($gBitUser->mGroups);
-	protector_content_verify_access( $pContent, $groups );
+	$roles = array_keys($gBitUser->mRoles);
+	protector_content_verify_access( $pContent, $roles );
 	$ret = array(
-		'join_sql' => " LEFT JOIN `".BIT_DB_PREFIX."liberty_content_group_map` lcgm ON ( lc.`content_id`=lcgm.`content_id` ) LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` pugm ON ( pugm.`group_id`=lcgm.`group_id` ) ",
-		'where_sql' => " AND (lcgm.`content_id` IS NULL OR lcgm.`group_id` IN(". implode(',', array_fill(0, count($groups), '?')) ." ) OR pugm.`user_id`=?) ",
+		'join_sql' => " LEFT JOIN `".BIT_DB_PREFIX."liberty_content_role_map` lcrm ON ( lc.`content_id`=lcrm.`content_id` ) LEFT OUTER JOIN `".BIT_DB_PREFIX."users_roles_map` purm ON ( purm.`role_id`=lcrm.`role_id` ) ",
+		'where_sql' => " AND (lcrm.`content_id` IS NULL OR lcrm.`role_id` IN(". implode(',', array_fill(0, count($roles), '?')) ." ) OR purm.`user_id`=?) ",
 		'bind_vars' => array( $gBitUser->mUserId ),
 	);
-	$ret['bind_vars'] = array_merge( $groups, $ret['bind_vars'] );
+	$ret['bind_vars'] = array_merge( $roles, $ret['bind_vars'] );
 	return $ret;
 }
 
@@ -129,7 +128,7 @@ function protector_comment_store( &$pContent, &$pParamHash ) {
 	// If a content access system is active, let's call it
 	if( $gBitSystem->isPackageActive( 'protector' ) ) {
 		if( isset( $pParamHash['comments_parent_id'] ) ) {
-			$pParamHash['protector']['group_id'] = $pContent->mDb->GetOne( "SELECT `group_id` FROM `".BIT_DB_PREFIX."liberty_content_group_map` WHERE `content_id`=?", array( $pParamHash['comments_parent_id'] ) );
+			$pParamHash['protector']['role_id'] = $pContent->mDb->GetOne( "SELECT `role_id` FROM `".BIT_DB_PREFIX."liberty_content_role_map` WHERE `content_id`=?", array( $pParamHash['comments_parent_id'] ) );
 		}
 		if( !$gProtector->storeProtection( $pParamHash ) ) {
 			$errors['protector'] = $gProtector->mErrors['security'];
@@ -140,7 +139,7 @@ function protector_comment_store( &$pContent, &$pParamHash ) {
 
 function protector_content_expunge( &$pContent = NULL ) {
 		if( @BitBase::verifyId( $pContent->mContentId ) ) {
-			$pContent->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_content_group_map` WHERE `content_id`=?", array( $pContent->mContentId ) );
+			$pContent->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_content_role_map` WHERE `content_id`=?", array( $pContent->mContentId ) );
 		}
 }
 
@@ -158,9 +157,9 @@ function protector_content_verify_access( &$pContent, &$pHash ) {
 // need to get ContentId if not set
 	}
 	if( $pContent->verifyId( $pContent->mContentId ) ) {
-		$query = "SELECT lc.`content_id`, lcgm.`group_id` as `is_protected`
+		$query = "SELECT lc.`content_id`, lcrm.`role_id` as `is_protected`
 			FROM `".BIT_DB_PREFIX."liberty_content` lc 
-			LEFT JOIN `".BIT_DB_PREFIX."liberty_content_group_map` lcgm ON ( lc.`content_id`=lcgm.`content_id` ) LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON ( ugm.`user_id`=".$gBitUser->mUserId." ) AND ( ugm.`group_id`=lcgm.`group_id` ) 
+			LEFT JOIN `".BIT_DB_PREFIX."liberty_content_role_map` lcrm ON ( lc.`content_id`=lcrm.`content_id` ) LEFT OUTER JOIN `".BIT_DB_PREFIX."users_roles_map` urm ON ( urm.`user_id`=".$gBitUser->mUserId." ) AND ( urm.`role_id`=lcrm.`role_id` ) 
 			WHERE lc.`content_id` = ?";
 		$ret = $pContent->mDb->getRow( $query, array( $pContent->mContentId ) );
 		if( $ret and is_numeric($ret['is_protected']) and !in_array( $ret['is_protected'], $pHash ) ) {
@@ -172,28 +171,28 @@ function protector_content_verify_access( &$pContent, &$pHash ) {
 
 function protector_content_edit( &$pContent ) {
 	global $gProtector, $gBitUser, $gBitSmarty;
-	$groups = $gBitUser->getGroups();
-	$groups[-1]['group_name'] = "~~ System Default ~~";
-	ksort( $groups );
-	foreach( array_keys( $groups ) as $groupId ) {
-		if( $groupId != -1 ) {
-			$protectorGroupsId[$groupId] = $groups[$groupId]['group_name'];
+	$roles = $gBitUser->getRoles();
+	$roles[-1]['role_name'] = "~~ System Default ~~";
+	ksort( $roles );
+	foreach( array_keys( $roles ) as $roleId ) {
+		if( $roleId != -1 ) {
+			$protectorRolesId[$roleId] = $roles[$roleId]['role_name'];
 		} else {
-			$protectorGroupsId[$groupId] = "~~ System Default ~~";
+			$protectorRolesId[$roleId] = "~~ System Default ~~";
 		}
 	}
 	if ( $pContent->mContentId ) {
-		$serviceHash['protector']['group'] = $gProtector->getProtectionList( $pContent->mContentId );
+		$serviceHash['protector']['role'] = $gProtector->getProtectionList( $pContent->mContentId );
 	} else {
 		if ( isset( $pContent->mInfo['parent_id'] ) ) {
-			$serviceHash['protector']['group'] = $gProtector->getProtectionList( $pContent->mInfo['parent_id'] );
+			$serviceHash['protector']['role'] = $gProtector->getProtectionList( $pContent->mInfo['parent_id'] );
 		}
 	}	
-	if ( isset( $serviceHash['protector']['group'] ) ) { $prot = array_keys( $serviceHash['protector']['group'] ); }
-	$serviceHash['protector']['group_id'] = ( empty( $prot[0] ) ? -1 : $prot[0] );
+	if ( isset( $serviceHash['protector']['role'] ) ) { $prot = array_keys( $serviceHash['protector']['role'] ); }
+	$serviceHash['protector']['role_id'] = ( empty( $prot[0] ) ? -1 : $prot[0] );
 	$gBitSmarty->assign_by_ref( 'serviceHash', $serviceHash );
-	$gBitSmarty->assign_by_ref( 'protectorGroupsId', $protectorGroupsId );
-	$gBitSmarty->assign_by_ref( 'protectorGroups', $groups );
+	$gBitSmarty->assign_by_ref( 'protectorRolesId', $protectorRolesId );
+	$gBitSmarty->assign_by_ref( 'protectorRoles', $roles );
 }
 
 global $gProtector;

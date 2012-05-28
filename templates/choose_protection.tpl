@@ -1,15 +1,16 @@
 <div class="row">
 	{formlabel label="Protection Level"}
 	{forminput}
-		{if $gBitSystem->isFeatureActive( 'protector_single_group' )}
-			Assign content to the following group:<br/>
-			{html_options name="protector[group_id]" options=$protectorGroupsId selected=`$serviceHash.protector.group_id`}
-			{formhelp note="Users of only this group can view the content of this category."}
+		{if $gBitSystem->isFeatureActive( 'protector_single_role' )}
+			Assign content to the following user role:<br/>
+			{html_options name="protector[role_id]" options=$protectorRolesId selected=`$serviceHash.protector.role_id`}
+			{formhelp note="Users assigned to this role can view this content item."}
 		{else}
-			Limit access to the following groups:<br/>
-			{foreach from=$protectorGroups key=groupId item=group}
-				<input type="checkbox" name="protector[group_id][]" value="{$groupId}" {if isset($serviceHash.protector.group.$groupId)}checked="checked"{/if} /> {$group.group_name}<br/>
+			Limit access to the following user roles:<br/>
+			{foreach from=$protectorRoles key=roleId item=role}
+				<input type="checkbox" name="protector[role_id][]" value="{$roleId}" {if isset($serviceHash.protector.role.$roleId)}checked="checked"{/if} /> {$role.role_name}<br/>
 			{/foreach}
+			{formhelp note="Users assigned to these roles can view this content item."}
 		{/if}
 	{/forminput}
 </div>

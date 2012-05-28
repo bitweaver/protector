@@ -1,0 +1,9 @@
+protector package adds an additional level of content management of that of simple package selection. 
+The user role (formally 'group') is taken as this level and only users assigned to the selected
+role will be able to see the content in lists and view it.
+
+An additional facility added to protector for central management of attachments although this is not  
+required for protector to work. 
+mime.flatdefault.php uses /storage/attachments/<content_id%1000./<content_id> for all content, rather 
+than filing them under each user. This is appropriate for sites where multiple users all add content
+to a central set of documentation.
