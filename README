@@ -7,4 +7,3 @@ required for protector to work.
 mime.flatdefault.php uses /storage/attachments/<content_id%1000./<content_id> for all content, rather 
 than filing them under each user. This is appropriate for sites where multiple users all add content
 to a central set of documentation.
-Just checking push action
