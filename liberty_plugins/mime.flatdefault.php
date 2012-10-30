@@ -299,7 +299,7 @@ if( !function_exists( 'mime_default_load' )) {
 
 				// add a description of how to insert this file into a wiki page
 				if( $gLibertySystem->isPluginActive( 'dataattachment' )) {
-					$ret['wiki_plugin_link'] = "{attachment id=".$row['attachment_id']."}";
+					$ret['wiki_plugin_link'] = "{image id=".$row['attachment_id']."}";
 				}
 
 				// additionally we'll add this to distinguish between old plugins and new ones
@@ -418,4 +418,67 @@ if( !function_exists( 'mime_default_branch' )) {
 		return $ret;
 	}
 }
+
+/**
+ * liberty_mime_get_storage_branch - get url to store files for the feature site_upload_dir. It creates a calculable hierarchy of directories
+ *
+ * @access public
+ * @author Lester Caine<lester@lsces.co.uk>
+ * @param $pParamHash key=>value pairs to determine path. Possible keys in descending directory depth are: use the 'common' branch if null, 'package' - any desired directory below the StoragePath. this will be created if it doesn't exist, 'sub_dir' -  the sub-directory in the package organization directory, this is often a primary id such as attachment_id
+ * @return string full path on local filsystem to store files.
+ */
+if( !function_exists( 'liberty_mime_get_storage_branch' )) {
+	function liberty_mime_get_storage_branch( $pParamHash ) { // $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pCreateDir = true ) {
+		// *PRIVATE FUNCTION. GO AWAY! DO NOT CALL DIRECTLY!!!
+		global $gBitSystem;
+		$pathParts = array();
+
+		if( $pAttachmentId = BitBase::getParameter( $pParamHash, 'attachment_id' ) ) {
+			$pathParts[] = 'attachments';
+			$pathParts[] = (int)($pAttachmentId % 1000);
+			$pathParts[] = $pAttachmentId;
+		} else {
+			$pathParts[] = 'common';
+		}
+
+		if( $pPackage = BitBase::getParameter( $pParamHash, 'package' ) ) {
+			$pathParts[] = $pPackage;
+		}
+
+		$fullPath = implode( $pathParts, '/' ).'/';
+		if( BitBase::getParameter( $pParamHash, 'create_dir', TRUE ) ){
+			if( !file_exists( STORAGE_PKG_PATH.$fullPath ) ) {
+				mkdir_p( STORAGE_PKG_PATH.$fullPath );
+			}
+		}
+
+		return $fullPath;
+	}
+}
+
+if( !function_exists( 'liberty_mime_get_source_url' )) {
+	function liberty_mime_get_source_url( $pParamHash ) {
+		if( empty( $pParamHash['package'] ) ) {
+			$pParamHash['package'] = liberty_mime_get_storage_sub_dir_name( array( 'type' => BitBase::getParameter( $pParamHash, 'mime_type' ), 'name' => BitBase::getParameter( $pParamHash, 'file_name' ) ) );
+		}
+		if( empty( $pParamHash['sub_dir'] ) ) {
+			$pParamHash['sub_dir'] = BitBase::getParameter( $pParamHash, 'attachment_id' );
+		}
+		return STORAGE_PKG_URL.liberty_mime_get_storage_branch( $pParamHash ).basename( BitBase::getParameter( $pParamHash, 'file_name' ) );
+	}
+}
+
+if( !function_exists( 'liberty_mime_get_source_file' )) {
+	function liberty_mime_get_source_file( $pParamHash ) {
+		if( empty( $pParamHash['package'] ) ) {
+			$pParamHash['package'] = liberty_mime_get_storage_sub_dir_name( array( 'type' => BitBase::getParameter( $pParamHash, 'mime_type' ), 'name' => BitBase::getParameter( $pParamHash, 'file_name' ) ) );
+		}
+		if( empty( $pParamHash['sub_dir'] ) ) {
+			$pParamHash['sub_dir'] = BitBase::getParameter( $pParamHash, 'attachment_id' );
+		}
+		return STORAGE_PKG_PATH.liberty_mime_get_storage_branch( $pParamHash ).basename( BitBase::getParameter( $pParamHash, 'file_name' ) );
+	}
+}
+
+
 ?>
