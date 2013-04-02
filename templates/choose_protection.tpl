@@ -1,4 +1,4 @@
-<div class="row">
+<div class="control-group">
 	{formlabel label="Protection Level"}
 	{forminput}
 		{if $gBitSystem->isFeatureActive( 'protector_single_role' )}
