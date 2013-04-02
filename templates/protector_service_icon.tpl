@@ -12,5 +12,5 @@
 	{assign var=securityLabel value="{tr}Password Required{/tr}"}
 {/if}
 {if $securityLabel}
-	{biticon ipackage="icons" iname="emblem-readonly" iexplain=$securityLabel iforce=icon_text}
+	{booticon iname="icon-lock" ipackage="icons" iexplain=$securityLabel iforce=icon_text}
 {/if}
