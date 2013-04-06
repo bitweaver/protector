@@ -3,7 +3,7 @@
 	{forminput}
 		{if $gBitSystem->isFeatureActive( 'protector_single_role' )}
 			Assign content to the following user role:<br/>
-			{html_options name="protector[role_id]" options=$protectorRolesId selected=`$serviceHash.protector.role_id`}
+			{html_options name="protector[role_id]" options=$protectorRolesId selected=$serviceHash.protector.role_id}
 			{formhelp note="Users assigned to this role can view this content item."}
 		{else}
 			Limit access to the following user roles:<br/>
