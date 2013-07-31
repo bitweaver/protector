@@ -436,7 +436,8 @@ if( !function_exists( 'liberty_mime_get_storage_branch' )) {
 		if( $pAttachmentId = BitBase::getParameter( $pParamHash, 'attachment_id' ) ) {
 			$pathParts[] = 'attachments';
 			$pathParts[] = (int)($pAttachmentId % 1000);
-			$pathParts[] = $pAttachmentId;
+//			$pathParts[] = $pAttachmentId;
+// Added in fisheye override
 		} else {
 			$pathParts[] = 'common';
 		}
