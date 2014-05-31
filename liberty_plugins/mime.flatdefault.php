@@ -215,6 +215,8 @@ if( !function_exists( 'mime_default_store' )) {
 				"file_size" => $pStoreRow['upload']['size'],
 				"user_id"   => $pStoreRow['user_id'],
 			);
+			if ( !$storeHash['file_size'] ) { $storeHash['file_size'] = 0; }
+
 			$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_files", $storeHash );
 
 			// add the data into liberty_attachments to make this file available as attachment
