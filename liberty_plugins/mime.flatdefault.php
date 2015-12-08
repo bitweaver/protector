@@ -1,12 +1,6 @@
 <?php
 /**
- * @version     $Header$
- *
- * @author      xing  <xing@synapse.plus.com> - converted to 'flat file' lsces ,lester@lsces.co.uk>
- * @version     $Revision$
- * created      Thursday May 08, 2008
- * @package     liberty
- * @subpackage  liberty_mime_handler
+ * Mime handler - flat attachments model default 
  *
  * As an alternative to storing file attachments in a user based storage tree, this version of mime.default.php
  * provides for a flat filing system based on id. A two level tree is currently provided bassed on a Mod 1000 trimming
@@ -17,6 +11,8 @@
  * define( 'LIBERTY_DEFAULT_MIME_HANDLER', 'mimeflatdefault' );
  * in config_inc.php to activate
  *
+ * @package     liberty
+ * @subpackage  liberty_mime_handler
  **/
 
 /**
