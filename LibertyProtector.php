@@ -225,9 +225,9 @@ function protector_content_edit( &$pContent ) {
 	}	
 	if ( isset( $serviceHash['protector']['role'] ) ) { $prot = array_keys( $serviceHash['protector']['role'] ); }
 	$serviceHash['protector']['role_id'] = ( empty( $prot[0] ) ? -1 : $prot[0] );
-	$gBitSmarty->assign_by_ref( 'serviceHash', $serviceHash );
-	$gBitSmarty->assign_by_ref( 'protectorRolesId', $protectorRolesId );
-	$gBitSmarty->assign_by_ref( 'protectorRoles', $roles );
+	$gBitSmarty->assignByRef( 'serviceHash', $serviceHash );
+	$gBitSmarty->assignByRef( 'protectorRolesId', $protectorRolesId );
+	$gBitSmarty->assignByRef( 'protectorRoles', $roles );
 }
 
 global $gProtector;
