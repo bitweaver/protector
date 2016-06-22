@@ -426,7 +426,7 @@ if( !function_exists( 'mime_default_branch' )) {
  * @return string full path on local filsystem to store files.
  */
 if( !function_exists( 'liberty_mime_get_storage_branch' )) {
-	function liberty_mime_get_storage_branch( $pParamHash ) { // $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pCreateDir = true ) {
+	function liberty_mime_get_storage_branch( $pParamHash ) { // $pSubDir = NULL, $pUserId = NULL, $pPackage = $gBitSystem->getActivePackage(), $pPermissions = 0755, $pCreateDir = true ) {
 		// *PRIVATE FUNCTION. GO AWAY! DO NOT CALL DIRECTLY!!!
 		global $gBitSystem;
 		$pathParts = array();
